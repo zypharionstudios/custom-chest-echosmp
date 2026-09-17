@@ -1,0 +1,24 @@
+name: EpicCrates
+version: 1.0.0
+main: de.deinname.epiccrates.EpicCrates
+api-version: '1.20'
+author: DeinName
+description: Physische Crates mit spektakulärer Öffnungsanimation
+commands:
+  crate:
+    description: Verwaltet EpicCrates
+    usage: /crate <give|list|remove|reload|preview|key>
+    aliases: [crates]
+permissions:
+  epiccrates.use:
+    description: Darf Crates öffnen
+    default: true
+  epiccrates.give:
+    description: Darf Crates und Keys geben
+    default: op
+  epiccrates.admin:
+    description: Darf Crates abbauen und verwalten
+    default: op
+  epiccrates.reload:
+    description: Darf die Konfiguration neu laden
+    default: op

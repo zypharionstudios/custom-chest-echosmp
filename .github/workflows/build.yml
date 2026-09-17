@@ -1,0 +1,37 @@
+name: EpicCrates Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+      - name: Java 17 einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Maven bauen
+        run: mvn --batch-mode clean package
+      - name: JAR als Artefakt hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: EpicCrates
+          path: target/EpicCrates-*.jar
+      - name: GitHub Release erstellen
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/EpicCrates-*.jar
+          generate_release_notes: true

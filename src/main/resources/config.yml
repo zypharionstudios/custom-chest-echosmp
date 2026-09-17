@@ -1,0 +1,95 @@
+settings:
+  cooldown-seconds: 20
+  animation-radius: 30
+  key-required: true
+  allow-admin-break: true
+  show-preview-gui: true
+crates:
+  common_crate:
+    display-name: "&fCommon Crate"
+    material: CHEST
+    color: WHITE
+    closed-model-data: 1001
+    open-model-data: 1002
+    key-material: TRIPWIRE_HOOK
+    loot:
+      - material: IRON_INGOT
+        amount: 16
+        rarity: COMMON
+        chance: 45
+      - material: COAL
+        amount: 24
+        rarity: COMMON
+        chance: 30
+      - material: BREAD
+        amount: 8
+        rarity: UNCOMMON
+        chance: 20
+      - material: EXPERIENCE_BOTTLE
+        amount: 12
+        rarity: RARE
+        chance: 5
+  rare_crate:
+    display-name: "&bRare Crate"
+    material: CHEST
+    color: AQUA
+    closed-model-data: 1101
+    open-model-data: 1102
+    key-material: TRIPWIRE_HOOK
+    loot:
+      - material: DIAMOND
+        amount: 16
+        rarity: RARE
+        chance: 45
+      - material: EMERALD
+        amount: 24
+        rarity: UNCOMMON
+        chance: 35
+      - material: GOLDEN_APPLE
+        amount: 2
+        rarity: LEGENDARY
+        chance: 20
+  epic_crate:
+    display-name: "&5Epic Crate"
+    material: CHEST
+    color: PURPLE
+    closed-model-data: 1201
+    open-model-data: 1202
+    key-material: TRIPWIRE_HOOK
+    loot:
+      - material: NETHERITE_SCRAP
+        amount: 4
+        rarity: RARE
+        chance: 45
+      - material: ENCHANTED_BOOK
+        amount: 1
+        rarity: EPIC
+        chance: 35
+      - material: TRIDENT
+        amount: 1
+        rarity: LEGENDARY
+        chance: 20
+  legendary_crate:
+    display-name: "&dLegendary Crate"
+    material: CHEST
+    color: PINK
+    closed-model-data: 1301
+    open-model-data: 1302
+    key-material: TRIPWIRE_HOOK
+    loot:
+      - material: NETHERITE_INGOT
+        amount: 1
+        rarity: LEGENDARY
+        chance: 45
+      - material: ELYTRA
+        amount: 1
+        rarity: LEGENDARY
+        chance: 25
+      - material: NETHER_STAR
+        amount: 1
+        rarity: LEGENDARY
+        chance: 20
+      - material: ENCHANTED_BOOK
+        amount: 1
+        rarity: EPIC
+        chance: 10
