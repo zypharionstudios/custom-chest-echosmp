@@ -3,8 +3,8 @@ package de.deinname.epiccrates.animation;
 import de.deinname.epiccrates.EpicCrates;
 import de.deinname.epiccrates.crate.Crate;
 import de.deinname.epiccrates.reward.Reward;
-import de.deinname.epiccrates.util.ColorUtil;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Location;
@@ -42,8 +42,11 @@ public final class CrateAnimation {
         player.sendTitle("§6§l✦ CRATE OPENING ✦", "", 0, 10, 5);
         nearby(crate.location(), 10, p -> p.playSound(crate.location(), Sound.ENTITY_ENDER_DRAGON_GROWL, 0.25f, 1f));
         Reward reward = plugin.rewards().choose(crate.type());
+        List<Reward> roulette = plugin.rewards().getRewards(crate.type());
         BukkitTask task = new BukkitRunnable() {
             int tick;
+            int nextSwitch = 20;
+            int rouletteIndex;
             BlockDisplay flyingCrate;
             ItemDisplay display;
             @Override public void run() {
@@ -56,7 +59,9 @@ public final class CrateAnimation {
                 } else if (tick < 60) {
                     if (flyingCrate == null) {
                         flyingCrate = (BlockDisplay) world.spawnEntity(center, EntityType.BLOCK_DISPLAY);
-                        flyingCrate.setBlock(org.bukkit.Material.CHEST.createBlockData());
+                        org.bukkit.block.data.type.Chest chestData = (org.bukkit.block.data.type.Chest) org.bukkit.Material.CHEST.createBlockData();
+                        chestData.setFacing(crate.facing());
+                        flyingCrate.setBlock(chestData);
                         flyingCrate.setGlowing(true);
                     }
                     Location flight = center.clone().add(Math.sin(tick * 0.32) * 0.45, (tick - 20) / 18.0, Math.cos(tick * 0.27) * 0.45);
@@ -69,21 +74,44 @@ public final class CrateAnimation {
                     if (tick == 20) nearby(crate.location(), 30, p -> p.playSound(crate.location(), Sound.BLOCK_CHEST_OPEN, .5f, .5f));
                 } else if (tick == 60) {
                     if (flyingCrate != null) { flyingCrate.remove(); flyingCrate = null; }
-                    world.spawnParticle(Particle.EXPLOSION_HUGE, center, 1);
-                    world.spawnParticle(Particle.EXPLOSION_LARGE, center, 8, .7, .7, .7, .1);
-                    world.spawnParticle(Particle.CLOUD, center, 40, .9, .6, .9, .08);
-                    nearby(crate.location(), 30, p -> { p.playSound(crate.location(), Sound.ENTITY_GENERIC_EXPLODE, .7f, 1.1f); p.playSound(crate.location(), Sound.BLOCK_BEACON_ACTIVATE, .6f, 1f); });
                     display = (ItemDisplay) world.spawnEntity(center.clone().add(0, .4, 0), EntityType.ITEM_DISPLAY);
-                    display.setItemStack(plugin.rewards().item(reward)); display.setBillboard(Billboard.CENTER); display.setGlowing(true);
-                } else if (tick < 140) {
+                    display.setItemStack(plugin.rewards().item(roulette.get(0))); display.setBillboard(Billboard.CENTER); display.setGlowing(true);
+                    nearby(crate.location(), 30, p -> p.playSound(crate.location(), Sound.BLOCK_NOTE_BLOCK_PLING, .8f, 1.8f));
+                } else if (tick < 130) {
+                    int elapsed = tick - 60;
+                    int interval = Math.min(12, 2 + elapsed / 9);
+                    if (tick >= nextSwitch && !roulette.isEmpty()) {
+                        Reward shown = roulette.get(rouletteIndex++ % roulette.size());
+                        display.setItemStack(plugin.rewards().item(shown));
+                        nextSwitch = tick + interval;
+                        nearby(crate.location(), 30, p -> p.playSound(crate.location(), Sound.BLOCK_NOTE_BLOCK_PLING, .55f, 1.1f + Math.min(1.0f, elapsed / 80f)));
+                    }
+                    double wobble = Math.sin(tick * 0.48) * Math.max(.04, .25 - elapsed / 380.0);
+                    display.teleport(center.clone().add(wobble, 1.0 + Math.sin(tick * .3) * .08, wobble * .7));
+                    display.setRotation(tick * 18, (float) (Math.sin(tick * .22) * 12));
+                    ParticleRunnable.circle(world, center.clone().add(0, 1.2, 0), 1.0, tick / 12.0, Particle.END_ROD, 14);
+                    world.spawnParticle(Particle.FIREWORKS_SPARK, center.clone().add(0, 1.2, 0), 4, .25, .3, .25, .03);
+                } else if (tick == 130) {
+                    display.setItemStack(plugin.rewards().item(reward));
+                    world.spawnParticle(Particle.EXPLOSION_HUGE, center.clone().add(0, 1.2, 0), 1);
+                    world.spawnParticle(Particle.EXPLOSION_LARGE, center.clone().add(0, 1.2, 0), 12, .8, .8, .8, .1);
+                    world.spawnParticle(Particle.CLOUD, center.clone().add(0, 1.2, 0), 50, .9, .7, .9, .08);
+                    nearby(crate.location(), 30, p -> { p.playSound(crate.location(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1.1f); p.playSound(crate.location(), Sound.BLOCK_BEACON_ACTIVATE, .8f, 1f); });
+                } else if (tick < 145) {
                     ParticleRunnable.circle(world, center.clone().add(0, 1.5, 0), .8, 1, Particle.TOTEM, 12);
                     ParticleRunnable.circle(world, center.clone().add(0, 1.5, 0), 1.15, 1.5, Particle.FIREWORKS_SPARK, 16);
                     if (tick % 8 == 0) world.spawnParticle(Particle.VILLAGER_HAPPY, center.clone().add(0, 2.2, 0), 8, .35, .3, .35, .01);
                     if (display != null) display.setRotation(tick * 8, 0);
-                    if (tick == 100) reveal(player, reward);
-                } else if (tick < 165 && display != null) {
+                    if (tick == 144) reveal(player, reward);
+                } else if (tick < 175 && display != null) {
                     Location from = center.clone().add(0, 2, 0);
-                    display.teleport(from.add(player.getLocation().toVector().subtract(from.toVector()).multiply((tick - 140) / 25.0)));
+                    double progress = (tick - 145) / 30.0;
+                    Location target = player.getLocation().clone().add(0, 1, 0);
+                    Location flight = from.clone().add(target.toVector().subtract(from.toVector()).multiply(progress));
+                    flight.add(0, Math.sin(progress * Math.PI) * 1.2, 0);
+                    display.teleport(flight);
+                    display.setRotation(tick * 16, 0);
+                    world.spawnParticle(Particle.TOTEM, flight, 5, .18, .18, .18, .03);
                 } else {
                     if (flyingCrate != null) flyingCrate.remove();
                     if (display != null) display.remove();

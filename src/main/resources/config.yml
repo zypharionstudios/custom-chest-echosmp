@@ -49,10 +49,30 @@ crates:
         amount: 32
         rarity: COMMON
         chance: 16
+      - material: DIRT
+        amount: 64
+        rarity: COMMON
+        chance: 18
+      - material: DIAMOND
+        amount: 2
+        rarity: RARE
+        chance: 3
       - material: SHIELD
         amount: 1
         rarity: UNCOMMON
         chance: 4
+      - material: STONE
+        amount: 64
+        rarity: COMMON
+        chance: 18
+      - material: TORCH
+        amount: 32
+        rarity: COMMON
+        chance: 14
+      - material: WATER_BUCKET
+        amount: 1
+        rarity: UNCOMMON
+        chance: 6
   rare_crate:
     display-name: "&bRare Crate"
     material: CHEST
@@ -97,6 +117,22 @@ crates:
         amount: 32
         rarity: UNCOMMON
         chance: 15
+      - material: DIAMOND
+        amount: 8
+        rarity: RARE
+        chance: 20
+      - material: GOLD_BLOCK
+        amount: 2
+        rarity: EPIC
+        chance: 7
+      - material: BLAZE_ROD
+        amount: 8
+        rarity: RARE
+        chance: 10
+      - material: ENDER_CHEST
+        amount: 1
+        rarity: EPIC
+        chance: 3
   epic_crate:
     display-name: "&5Epic Crate"
     material: CHEST
@@ -141,6 +177,22 @@ crates:
         amount: 4
         rarity: EPIC
         chance: 7
+      - material: NETHERITE_INGOT
+        amount: 1
+        rarity: LEGENDARY
+        chance: 4
+      - material: NETHERITE_UPGRADE_SMITHING_TEMPLATE
+        amount: 1
+        rarity: LEGENDARY
+        chance: 3
+      - material: DIAMOND_PICKAXE
+        amount: 1
+        rarity: EPIC
+        chance: 8
+      - material: ENDER_CHEST
+        amount: 1
+        rarity: EPIC
+        chance: 5
   legendary_crate:
     display-name: "&dLegendary Crate"
     material: CHEST
@@ -153,10 +205,6 @@ crates:
         amount: 1
         rarity: LEGENDARY
         chance: 45
-      - material: ELYTRA
-        amount: 1
-        rarity: LEGENDARY
-        chance: 25
       - material: NETHER_STAR
         amount: 1
         rarity: LEGENDARY
@@ -185,7 +233,27 @@ crates:
         amount: 1
         rarity: EPIC
         chance: 3
-      - material: DRAGON_EGG
+      - material: NETHERITE_BLOCK
         amount: 1
         rarity: LEGENDARY
-        chance: 1
+        chance: 2
+      - material: NETHERITE_UPGRADE_SMITHING_TEMPLATE
+        amount: 1
+        rarity: LEGENDARY
+        chance: 3
+      - material: ENCHANTED_GOLDEN_APPLE
+        amount: 2
+        rarity: LEGENDARY
+        chance: 2
+      - material: SHULKER_BOX
+        amount: 1
+        rarity: EPIC
+        chance: 6
+      - material: TOTEM_OF_UNDYING
+        amount: 2
+        rarity: LEGENDARY
+        chance: 3
+      - material: DIAMOND_BLOCK
+        amount: 8
+        rarity: EPIC
+        chance: 5

@@ -11,6 +11,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -41,7 +43,8 @@ public final class CrateManager {
             if (world == null || type == null) continue;
             Location location = new Location(world, data.getInt(key + ".x"), data.getInt(key + ".y"), data.getInt(key + ".z"));
             String owner = data.getString(key + ".owner");
-            Crate crate = new Crate(location, type, owner == null ? null : UUID.fromString(owner));
+            BlockFace facing = parseFacing(data.getString(key + ".facing", "NORTH"));
+            Crate crate = new Crate(location, type, owner == null ? null : UUID.fromString(owner), facing);
             crates.put(crate.key(), crate);
             markBlock(crate);
             spawnLabel(crate);
@@ -58,14 +61,19 @@ public final class CrateManager {
             data.set(path + ".z", crate.location().getBlockZ());
             data.set(path + ".type", crate.type().id());
             data.set(path + ".owner", crate.owner() == null ? null : crate.owner().toString());
+            data.set(path + ".facing", crate.facing().name());
         }
         try { data.save(file); } catch (Exception exception) { plugin.getLogger().severe("Crates konnten nicht gespeichert werden: " + exception.getMessage()); }
     }
 
-    public Crate create(Location location, CrateType type, UUID owner) {
+    public Crate create(Location location, CrateType type, UUID owner, BlockFace facing) {
         Block block = location.getBlock();
         block.setType(Material.CHEST, false);
-        Crate crate = new Crate(block.getLocation(), type, owner);
+        if (block.getBlockData() instanceof Chest chest) {
+            chest.setFacing(facing);
+            block.setBlockData(chest, false);
+        }
+        Crate crate = new Crate(block.getLocation(), type, owner, facing);
         crates.put(crate.key(), crate);
         markBlock(crate);
         spawnLabel(crate);
@@ -83,19 +91,25 @@ public final class CrateManager {
     private void spawnLabel(Crate crate) {
         removeLabel(crate.location());
         String configuredName = plugin.getConfig().getString("crates." + crate.type().id() + ".display-name", crate.type().id());
-        ArmorStand label = (ArmorStand) crate.location().getWorld().spawnEntity(crate.location().clone().add(0.5, 1.35, 0.5), EntityType.ARMOR_STAND);
+        ArmorStand label = createLabel(crate, crate.location().clone().add(0.5, 1.35, 0.5), "§6✦ " + de.deinname.epiccrates.util.ColorUtil.color(configuredName) + " §6✦");
+        createLabel(crate, crate.location().clone().add(0.5, 1.08, 0.5), "§e✦ LOOTPOOL §7| §fLinksklick: Vorschau §7| §fRechtsklick: Öffnen");
+    }
+
+    private ArmorStand createLabel(Crate crate, Location location, String text) {
+        ArmorStand label = (ArmorStand) crate.location().getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         label.setInvisible(true);
         label.setMarker(true);
         label.setGravity(false);
         label.setInvulnerable(true);
         label.setPersistent(true);
-        label.setCustomName("§6✦ " + de.deinname.epiccrates.util.ColorUtil.color(configuredName) + " §6✦");
+        label.setCustomName(text);
         label.setCustomNameVisible(true);
         label.getPersistentDataContainer().set(plugin.crateLabelKey(), PersistentDataType.STRING, crate.key());
+        return label;
     }
 
     private void removeLabel(Location location) {
-        for (Entity entity : location.getWorld().getNearbyEntities(location.clone().add(0.5, 1.35, 0.5), 1.2, 2.0, 1.2)) {
+        for (Entity entity : location.getWorld().getNearbyEntities(location.clone().add(0.5, 1.2, 0.5), 1.2, 2.6, 1.2)) {
             if (!(entity instanceof ArmorStand)) continue;
             String key = entity.getPersistentDataContainer().get(plugin.crateLabelKey(), PersistentDataType.STRING);
             if (key != null && key.equals(key(location))) entity.remove();
@@ -105,6 +119,17 @@ public final class CrateManager {
     public Crate get(Location location) { return crates.get(key(location)); }
     public Collection<Crate> all() { return crates.values(); }
     public Crate remove(Location location) { Crate crate = crates.remove(key(location)); if (crate != null) { removeLabel(location); save(); } return crate; }
-    public void restoreBlock(Crate crate) { crate.location().getBlock().setType(Material.CHEST, false); markBlock(crate); }
+    public void restoreBlock(Crate crate) {
+        Block block = crate.location().getBlock();
+        block.setType(Material.CHEST, false);
+        if (block.getBlockData() instanceof Chest chest) {
+            chest.setFacing(crate.facing());
+            block.setBlockData(chest, false);
+        }
+        markBlock(crate);
+    }
+    private BlockFace parseFacing(String value) {
+        try { return BlockFace.valueOf(value.toUpperCase()); } catch (IllegalArgumentException exception) { return BlockFace.NORTH; }
+    }
     public String key(Location location) { return location.getWorld().getUID() + ":" + location.getBlockX() + ":" + location.getBlockY() + ":" + location.getBlockZ(); }
 }

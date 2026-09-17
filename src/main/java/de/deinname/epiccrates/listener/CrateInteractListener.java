@@ -26,7 +26,12 @@ public final class CrateInteractListener implements Listener {
     public void onPlace(BlockPlaceEvent event) {
         String marker = event.getItemInHand().getItemMeta() == null ? null : event.getItemInHand().getItemMeta().getPersistentDataContainer().get(plugin.crateKey(), PersistentDataType.STRING);
         if (marker == null || !marker.startsWith("crate:")) return;
-        CrateType type = CrateType.fromId(marker.substring(6)); if (type != null) { plugin.crates().create(event.getBlock().getLocation(), type, event.getPlayer().getUniqueId()); event.getPlayer().sendMessage("§a" + type.id() + " wurde platziert."); }
+        CrateType type = CrateType.fromId(marker.substring(6));
+        if (type != null) {
+            org.bukkit.block.BlockFace facing = event.getPlayer().getFacing().getOppositeFace();
+            plugin.crates().create(event.getBlock().getLocation(), type, event.getPlayer().getUniqueId(), facing);
+            event.getPlayer().sendMessage("§a" + type.id() + " wurde platziert. Ausrichtung: §e" + facing.name());
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
