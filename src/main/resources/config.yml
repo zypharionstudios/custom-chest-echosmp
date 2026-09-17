@@ -29,6 +29,18 @@ crates:
         amount: 12
         rarity: RARE
         chance: 5
+      - material: GOLD_INGOT
+        amount: 16
+        rarity: UNCOMMON
+        chance: 12
+      - material: ARROW
+        amount: 32
+        rarity: COMMON
+        chance: 18
+      - material: IRON_PICKAXE
+        amount: 1
+        rarity: UNCOMMON
+        chance: 5
   rare_crate:
     display-name: "&bRare Crate"
     material: CHEST
@@ -49,6 +61,18 @@ crates:
         amount: 2
         rarity: LEGENDARY
         chance: 20
+      - material: DIAMOND_BLOCK
+        amount: 2
+        rarity: LEGENDARY
+        chance: 8
+      - material: ENCHANTED_GOLDEN_APPLE
+        amount: 1
+        rarity: LEGENDARY
+        chance: 2
+      - material: EXPERIENCE_BOTTLE
+        amount: 24
+        rarity: UNCOMMON
+        chance: 15
   epic_crate:
     display-name: "&5Epic Crate"
     material: CHEST
@@ -69,6 +93,18 @@ crates:
         amount: 1
         rarity: LEGENDARY
         chance: 20
+      - material: DIAMOND
+        amount: 32
+        rarity: RARE
+        chance: 15
+      - material: SHULKER_SHELL
+        amount: 2
+        rarity: EPIC
+        chance: 8
+      - material: TOTEM_OF_UNDYING
+        amount: 1
+        rarity: LEGENDARY
+        chance: 2
   legendary_crate:
     display-name: "&dLegendary Crate"
     material: CHEST
@@ -93,3 +129,15 @@ crates:
         amount: 1
         rarity: EPIC
         chance: 10
+      - material: BEACON
+        amount: 1
+        rarity: LEGENDARY
+        chance: 5
+      - material: DRAGON_BREATH
+        amount: 16
+        rarity: EPIC
+        chance: 5
+      - material: GOLDEN_APPLE
+        amount: 8
+        rarity: RARE
+        chance: 5

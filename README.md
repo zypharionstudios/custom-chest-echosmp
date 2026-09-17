@@ -18,13 +18,18 @@ EpicCrates ist ein Paper-Plugin für Minecraft 1.20.4+, das physische Crates mit
 
 ## Befehle und Berechtigungen
 
+Alle `/crate`-Befehle sind ausschließlich für Operatoren verfügbar. Die Konsole darf sie ebenfalls ausführen.
+
 - `/crate give <spieler> <typ> [anzahl]` - gibt physische Crates aus; `epiccrates.give`
+- `/crate give <typ> [anzahl]` - gibt eine Crate an dich selbst
 - `/crate list` - listet alle Crate-Typen
 - `/crate remove` - entfernt die Crate, die der Spieler ansieht; `epiccrates.admin`
 - `/crate reload` - lädt die Konfiguration neu; `epiccrates.reload`
 - `/crate preview <typ>` - öffnet die Loot-Vorschau
 - `/crate key give <spieler> <typ> [anzahl]` - gibt passende Keys; `epiccrates.give`
 - Rechtsklick auf eine Crate - öffnet sie mit dem passenden Key; `epiccrates.use`
+
+Nach dem Platzieren zeigt ein dauerhaftes Hologramm direkt über der Kiste den Crate-Typ an.
 
 Standardtypen sind `common_crate`, `rare_crate`, `epic_crate` und `legendary_crate`. Loot, Chancen, Materialien, Model-Daten und Cooldown werden in `config.yml` definiert.
 

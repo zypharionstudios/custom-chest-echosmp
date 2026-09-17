@@ -16,11 +16,13 @@ public final class EpicCrates extends JavaPlugin {
     private RewardManager rewardManager;
     private CrateAnimation animation;
     private NamespacedKey crateKey;
+    private NamespacedKey crateLabelKey;
 
     @Override public void onEnable() {
         saveDefaultConfig();
         saveResource("messages.yml", false);
         crateKey = new NamespacedKey(this, "crate_type");
+        crateLabelKey = new NamespacedKey(this, "crate_label");
         crateManager = new CrateManager(this);
         crateManager.load();
         rewardManager = new RewardManager(this);
@@ -38,4 +40,5 @@ public final class EpicCrates extends JavaPlugin {
     public RewardManager rewards() { return rewardManager; }
     public CrateAnimation animation() { return animation; }
     public NamespacedKey crateKey() { return crateKey; }
+    public NamespacedKey crateLabelKey() { return crateLabelKey; }
 }

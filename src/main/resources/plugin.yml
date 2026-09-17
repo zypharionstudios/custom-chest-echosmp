@@ -7,9 +7,13 @@ description: Physische Crates mit spektakulärer Öffnungsanimation
 commands:
   crate:
     description: Verwaltet EpicCrates
-    usage: /crate <give|list|remove|reload|preview|key>
-    aliases: [crates]
+    usage: /crate give <spieler> <typ> [anzahl]
+    aliases: [crates, epiccrates]
+    permission: epiccrates.command
 permissions:
+  epiccrates.command:
+    description: Darf EpicCrates-Befehle verwenden
+    default: op
   epiccrates.use:
     description: Darf Crates öffnen
     default: true

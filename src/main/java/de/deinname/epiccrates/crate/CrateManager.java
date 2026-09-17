@@ -12,6 +12,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -40,6 +44,7 @@ public final class CrateManager {
             Crate crate = new Crate(location, type, owner == null ? null : UUID.fromString(owner));
             crates.put(crate.key(), crate);
             markBlock(crate);
+            spawnLabel(crate);
         }
     }
 
@@ -63,6 +68,7 @@ public final class CrateManager {
         Crate crate = new Crate(block.getLocation(), type, owner);
         crates.put(crate.key(), crate);
         markBlock(crate);
+        spawnLabel(crate);
         save();
         return crate;
     }
@@ -73,8 +79,31 @@ public final class CrateManager {
         state.update(true, false);
     }
 
+    /** Zeigt den Namen der Crate dauerhaft über dem Block an. */
+    private void spawnLabel(Crate crate) {
+        removeLabel(crate.location());
+        String configuredName = plugin.getConfig().getString("crates." + crate.type().id() + ".display-name", crate.type().id());
+        ArmorStand label = (ArmorStand) crate.location().getWorld().spawnEntity(crate.location().clone().add(0.5, 1.35, 0.5), EntityType.ARMOR_STAND);
+        label.setInvisible(true);
+        label.setMarker(true);
+        label.setGravity(false);
+        label.setInvulnerable(true);
+        label.setPersistent(true);
+        label.setCustomName("§6✦ " + de.deinname.epiccrates.util.ColorUtil.color(configuredName) + " §6✦");
+        label.setCustomNameVisible(true);
+        label.getPersistentDataContainer().set(plugin.crateLabelKey(), PersistentDataType.STRING, crate.key());
+    }
+
+    private void removeLabel(Location location) {
+        for (Entity entity : location.getWorld().getNearbyEntities(location.clone().add(0.5, 1.35, 0.5), 1.2, 2.0, 1.2)) {
+            if (!(entity instanceof ArmorStand)) continue;
+            String key = entity.getPersistentDataContainer().get(plugin.crateLabelKey(), PersistentDataType.STRING);
+            if (key != null && key.equals(key(location))) entity.remove();
+        }
+    }
+
     public Crate get(Location location) { return crates.get(key(location)); }
     public Collection<Crate> all() { return crates.values(); }
-    public Crate remove(Location location) { Crate crate = crates.remove(key(location)); if (crate != null) save(); return crate; }
+    public Crate remove(Location location) { Crate crate = crates.remove(key(location)); if (crate != null) { removeLabel(location); save(); } return crate; }
     public String key(Location location) { return location.getWorld().getUID() + ":" + location.getBlockX() + ":" + location.getBlockY() + ":" + location.getBlockZ(); }
 }
