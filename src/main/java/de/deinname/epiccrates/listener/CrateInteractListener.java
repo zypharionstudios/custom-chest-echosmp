@@ -4,6 +4,7 @@ import de.deinname.epiccrates.EpicCrates;
 import de.deinname.epiccrates.commands.CrateCommand;
 import de.deinname.epiccrates.crate.Crate;
 import de.deinname.epiccrates.crate.CrateType;
+import de.deinname.epiccrates.gui.PreviewGUI;
 import de.deinname.epiccrates.util.ColorUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,9 +31,19 @@ public final class CrateInteractListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.LEFT_CLICK_BLOCK) return;
         Crate crate = plugin.crates().get(event.getClickedBlock().getLocation()); if (crate == null) return;
         event.setCancelled(true); Player player = event.getPlayer();
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            if (player.getGameMode() == org.bukkit.GameMode.CREATIVE) {
+                plugin.crates().remove(crate.location());
+                crate.location().getBlock().setType(Material.AIR, false);
+                player.sendMessage("§a" + crate.type().id() + " wurde entfernt.");
+            } else if (plugin.getConfig().getBoolean("settings.show-preview-gui", true)) {
+                new PreviewGUI(plugin).open(player, crate.type());
+            }
+            return;
+        }
         if (!player.hasPermission("epiccrates.use")) { player.sendMessage("§cDafür fehlt dir die Berechtigung."); return; }
         if (plugin.animation().isActive(crate)) { player.sendMessage("§cDiese Crate wird gerade geöffnet."); return; }
         long cooldown = plugin.animation().cooldown(player.getUniqueId()); if (cooldown > 0) { player.sendMessage("§cDu musst noch §e" + ((cooldown + 999) / 1000) + "s §cwarten."); return; }

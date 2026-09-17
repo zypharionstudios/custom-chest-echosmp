@@ -105,5 +105,6 @@ public final class CrateManager {
     public Crate get(Location location) { return crates.get(key(location)); }
     public Collection<Crate> all() { return crates.values(); }
     public Crate remove(Location location) { Crate crate = crates.remove(key(location)); if (crate != null) { removeLabel(location); save(); } return crate; }
+    public void restoreBlock(Crate crate) { crate.location().getBlock().setType(Material.CHEST, false); markBlock(crate); }
     public String key(Location location) { return location.getWorld().getUID() + ":" + location.getBlockX() + ":" + location.getBlockY() + ":" + location.getBlockZ(); }
 }

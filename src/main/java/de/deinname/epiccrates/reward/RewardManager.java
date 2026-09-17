@@ -42,4 +42,9 @@ public final class RewardManager {
     public ItemStack item(Reward reward) {
         return new ItemStack(reward.material(), reward.amount());
     }
+
+    public double probability(Reward reward, CrateType type) {
+        double total = getRewards(type).stream().mapToDouble(Reward::chance).sum();
+        return total <= 0 ? 0 : reward.chance() / total * 100.0;
+    }
 }

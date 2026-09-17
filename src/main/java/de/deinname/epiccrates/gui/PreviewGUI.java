@@ -22,7 +22,7 @@ public final class PreviewGUI implements Listener {
         Inventory inventory = Bukkit.createInventory(null, 27, ColorUtil.color("&8Loot: " + type.id()));
         List<Reward> rewards = plugin.rewards().getRewards(type);
         for (int index = 0; index < rewards.size() && index < 27; index++) {
-            Reward reward = rewards.get(index); ItemStack item = new ItemStack(reward.material(), reward.amount()); ItemMeta meta = item.getItemMeta(); meta.setDisplayName("§f" + reward.material().name()); meta.setLore(java.util.List.of("§7Seltenheit: §e" + reward.rarity(), "§7Chance: §e" + reward.chance() + "%")); item.setItemMeta(meta); inventory.setItem(index, item);
+            Reward reward = rewards.get(index); ItemStack item = new ItemStack(reward.material(), reward.amount()); ItemMeta meta = item.getItemMeta(); meta.setDisplayName("§f" + reward.material().name()); meta.setLore(java.util.List.of("§7Seltenheit: §e" + reward.rarity(), "§7Wahrscheinlichkeit: §e" + String.format(java.util.Locale.US, "%.2f", plugin.rewards().probability(reward, type)) + "%")); item.setItemMeta(meta); inventory.setItem(index, item);
         }
         player.openInventory(inventory);
     }

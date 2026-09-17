@@ -41,6 +41,18 @@ crates:
         amount: 1
         rarity: UNCOMMON
         chance: 5
+      - material: COOKED_BEEF
+        amount: 16
+        rarity: COMMON
+        chance: 14
+      - material: OAK_LOG
+        amount: 32
+        rarity: COMMON
+        chance: 16
+      - material: SHIELD
+        amount: 1
+        rarity: UNCOMMON
+        chance: 4
   rare_crate:
     display-name: "&bRare Crate"
     material: CHEST
@@ -71,6 +83,18 @@ crates:
         chance: 2
       - material: EXPERIENCE_BOTTLE
         amount: 24
+        rarity: UNCOMMON
+        chance: 15
+      - material: OBSIDIAN
+        amount: 16
+        rarity: RARE
+        chance: 12
+      - material: ENDER_PEARL
+        amount: 8
+        rarity: RARE
+        chance: 8
+      - material: LAPIS_LAZULI
+        amount: 32
         rarity: UNCOMMON
         chance: 15
   epic_crate:
@@ -105,6 +129,18 @@ crates:
         amount: 1
         rarity: LEGENDARY
         chance: 2
+      - material: DIAMOND_BLOCK
+        amount: 4
+        rarity: EPIC
+        chance: 5
+      - material: ENDER_PEARL
+        amount: 16
+        rarity: RARE
+        chance: 8
+      - material: GOLDEN_APPLE
+        amount: 4
+        rarity: EPIC
+        chance: 7
   legendary_crate:
     display-name: "&dLegendary Crate"
     material: CHEST
@@ -141,3 +177,15 @@ crates:
         amount: 8
         rarity: RARE
         chance: 5
+      - material: ANCIENT_DEBRIS
+        amount: 4
+        rarity: LEGENDARY
+        chance: 4
+      - material: HEART_OF_THE_SEA
+        amount: 1
+        rarity: EPIC
+        chance: 3
+      - material: DRAGON_EGG
+        amount: 1
+        rarity: LEGENDARY
+        chance: 1

@@ -30,6 +30,7 @@ Alle `/crate`-Befehle sind ausschließlich für Operatoren verfügbar. Die Konso
 - Rechtsklick auf eine Crate - öffnet sie mit dem passenden Key; `epiccrates.use`
 
 Nach dem Platzieren zeigt ein dauerhaftes Hologramm direkt über der Kiste den Crate-Typ an.
+Linksklick auf eine Crate öffnet die Loot-Vorschau mit den tatsächlichen Wahrscheinlichkeiten. In Creative entfernt Linksklick die Crate direkt.
 
 Standardtypen sind `common_crate`, `rare_crate`, `epic_crate` und `legendary_crate`. Loot, Chancen, Materialien, Model-Daten und Cooldown werden in `config.yml` definiert.
 

@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.Color;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Display.Billboard;
@@ -35,6 +36,7 @@ public final class CrateAnimation {
         if (isActive(crate) || cooldown(player.getUniqueId()) > 0) return false;
         active.put(crate.key(), player.getUniqueId());
         setChestOpen(crate, true);
+        crate.location().getBlock().setType(org.bukkit.Material.AIR, false);
         player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.BLINDNESS, 10, 0));
         player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.SLOW, 10, 10));
         player.sendTitle("§6§l✦ CRATE OPENING ✦", "", 0, 10, 5);
@@ -42,6 +44,7 @@ public final class CrateAnimation {
         Reward reward = plugin.rewards().choose(crate.type());
         BukkitTask task = new BukkitRunnable() {
             int tick;
+            BlockDisplay flyingCrate;
             ItemDisplay display;
             @Override public void run() {
                 if (!player.isOnline()) { finish(crate, player); cancel(); return; }
@@ -51,13 +54,24 @@ public final class CrateAnimation {
                     world.spawnParticle(Particle.CLOUD, center, 4, .25, .15, .25, .02);
                     ParticleRunnable.circle(world, center, 0.7, tick / 20.0, Particle.SMOKE_NORMAL, 12);
                 } else if (tick < 60) {
+                    if (flyingCrate == null) {
+                        flyingCrate = (BlockDisplay) world.spawnEntity(center, EntityType.BLOCK_DISPLAY);
+                        flyingCrate.setBlock(org.bukkit.Material.CHEST.createBlockData());
+                        flyingCrate.setGlowing(true);
+                    }
+                    Location flight = center.clone().add(Math.sin(tick * 0.32) * 0.45, (tick - 20) / 18.0, Math.cos(tick * 0.27) * 0.45);
+                    flyingCrate.teleport(flight);
+                    flyingCrate.setRotation(tick * 18, (float) Math.sin(tick * 0.2) * 15);
                     ParticleRunnable.circle(world, center, 1.1, tick / 20.0, Particle.ENCHANTMENT_TABLE, 18);
                     ParticleRunnable.circle(world, center, 1.45, tick / 15.0, Particle.END_ROD, 14);
                     world.spawnParticle(Particle.FLAME, center.clone().add(0, tick / 25.0, 0), 3, .2, .1, .2, .01);
                     world.spawnParticle(Particle.SOUL_FIRE_FLAME, center.clone().add(0, 1.2, 0), 2, .35, .2, .35, .01);
                     if (tick == 20) nearby(crate.location(), 30, p -> p.playSound(crate.location(), Sound.BLOCK_CHEST_OPEN, .5f, .5f));
                 } else if (tick == 60) {
+                    if (flyingCrate != null) { flyingCrate.remove(); flyingCrate = null; }
                     world.spawnParticle(Particle.EXPLOSION_HUGE, center, 1);
+                    world.spawnParticle(Particle.EXPLOSION_LARGE, center, 8, .7, .7, .7, .1);
+                    world.spawnParticle(Particle.CLOUD, center, 40, .9, .6, .9, .08);
                     nearby(crate.location(), 30, p -> { p.playSound(crate.location(), Sound.ENTITY_GENERIC_EXPLODE, .7f, 1.1f); p.playSound(crate.location(), Sound.BLOCK_BEACON_ACTIVATE, .6f, 1f); });
                     display = (ItemDisplay) world.spawnEntity(center.clone().add(0, .4, 0), EntityType.ITEM_DISPLAY);
                     display.setItemStack(plugin.rewards().item(reward)); display.setBillboard(Billboard.CENTER); display.setGlowing(true);
@@ -71,6 +85,7 @@ public final class CrateAnimation {
                     Location from = center.clone().add(0, 2, 0);
                     display.teleport(from.add(player.getLocation().toVector().subtract(from.toVector()).multiply((tick - 140) / 25.0)));
                 } else {
+                    if (flyingCrate != null) flyingCrate.remove();
                     if (display != null) display.remove();
                     ItemStack item = plugin.rewards().item(reward);
                     player.getInventory().addItem(item);
@@ -94,7 +109,7 @@ public final class CrateAnimation {
     }
 
     private void nearby(Location location, double radius, java.util.function.Consumer<Player> action) { for (Player player : location.getWorld().getPlayers()) if (player.getLocation().distanceSquared(location) <= radius * radius) action.accept(player); }
-    private void finish(Crate crate, Player player) { setChestOpen(crate, false); active.remove(crate.key()); tasks.remove(crate.key()); cooldowns.put(player.getUniqueId(), System.currentTimeMillis() + plugin.getConfig().getLong("settings.cooldown-seconds", 20) * 1000L); }
+    private void finish(Crate crate, Player player) { setChestOpen(crate, false); plugin.crates().restoreBlock(crate); active.remove(crate.key()); tasks.remove(crate.key()); cooldowns.put(player.getUniqueId(), System.currentTimeMillis() + plugin.getConfig().getLong("settings.cooldown-seconds", 20) * 1000L); }
     private void setChestOpen(Crate crate, boolean open) {
         if (crate.location().getBlock().getState() instanceof Chest chest) {
             chest.open();
